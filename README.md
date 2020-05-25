@@ -3,8 +3,11 @@
 ## Samples could be made using following runmodes and servers
 
 RUNMODE : MULTICORE / CLUSTER / CRABJOB
+
 MULTICORE : SNU
+
 CLUSTER : SNU tamsa / KISTI
+
 CRABJOB : KNU / KISTI
 
 
@@ -25,7 +28,7 @@ python setup.py -m Fast,Full -y 2017 # 2017, fast and full simulation
 python setup.py -m Full -y 2016,2017 # 2016 and 2017, full simulation
 python setup.py -m LHE,Full -y 2016 # LHE production & 2016, full simulation
 ```
-Or for whole specific campaign setups, execute without any option
+Or for whole campaign setups, execute without any option
 ```bash
 python setup.py
 ```
