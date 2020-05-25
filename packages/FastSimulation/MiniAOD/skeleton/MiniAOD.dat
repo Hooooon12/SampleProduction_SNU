@@ -1,0 +1,3 @@
+2016	step1 --fileout file:SUS-RunIISummer16MiniAODv3-00314.root --mc --eventcontent MINIAODSIM --runUnscheduled --fast --datatier MINIAODSIM --conditions 94X_mcRun2_asymptotic_v3 --step PAT --nThreads 8 --era Run2_2016,run2_miniAOD_80XLegacy
+2017	step1 --fileout file:SUS-RunIIFall17MiniAODv2-00275.root --mc --eventcontent MINIAODSIM --runUnscheduled --fast --datatier MINIAODSIM --conditions 94X_mc2017_realistic_v15 --step PAT --nThreads 4 --scenario pp --era Run2_2017_FastSim,run2_miniAOD_94XFall17
+2018	cmsDriver.py step1 --fileout file:SUS-RunIIAutumn18MiniAOD-00171.root --mc --eventcontent MINIAODSIM --fast --runUnscheduled --datatier MINIAODSIM --conditions 102X_upgrade2018_realistic_v15 --step PAT --nThreads 8 --geometry DB:Extended --era Run2_2018
