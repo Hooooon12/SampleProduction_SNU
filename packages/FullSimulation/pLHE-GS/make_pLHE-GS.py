@@ -163,15 +163,19 @@ if (runmode == "MULTICORE") or (runmode == "CLUSTER"):
     runshellfile.write(this_cmsdrivercmd+"\n")
     runshellfile.write("cmsRun run"+str(ijob)+".py &> run"+str(ijob)+".log\n")
     runshellfile.close()
+    os.chmod(runmode+"/"+sample_name+"/run"+str(ijob)+"/run"+str(ijob)+".sh",0o755)
 
     submitshellfile.write("cd "+cwd+"/"+runmode+"/"+sample_name+"/run"+str(ijob)+"\n")
     if (runmode == "MULTICORE"):
-      submitshellfile.write("chmod 755 "+cwd+"/"+runmode+"/"+sample_name+"/run"+str(ijob)+"/run"+str(ijob)+".sh\n")
       submitshellfile.write("nohup "+cwd+"/"+runmode+"/"+sample_name+"/run"+str(ijob)+"/run"+str(ijob)+".sh &\n")
     elif (runmode == "CLUSTER"):
       os.system("cp skeleton/condor.jds "+runmode+"/"+sample_name+"/run"+str(ijob))
       os.system("sed -i 's|###CONDORRUN|executable = run"+str(ijob)+".sh|g' "+runmode+"/"+sample_name+"/run"+str(ijob)+"/condor.jds")
       os.system("sed -i 's|###JOBBATCHNAME|+JobBatchName=\""+sample_name+"\"|g' "+runmode+"/"+sample_name+"/run"+str(ijob)+"/condor.jds")
+      if os.getenv("HOSTNAME") in ["tamsa1","tamsa2"]:
+        os.system("sed -i '/accounting_group/d' "+runmode+"/"+sample_name+"/run"+str(ijob)+"/condor.jds")
+        os.system("sed -i '/should_transfer_files/d' "+runmode+"/"+sample_name+"/run"+str(ijob)+"/condor.jds")
+        os.system("sed -i '/when_to_transfer_output/d' "+runmode+"/"+sample_name+"/run"+str(ijob)+"/condor.jds")
       submitshellfile.write("condor_submit condor.jds\n")
 
 elif (runmode == "CRABJOB"):

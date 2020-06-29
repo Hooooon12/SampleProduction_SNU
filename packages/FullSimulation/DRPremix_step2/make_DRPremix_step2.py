@@ -107,7 +107,7 @@ else:
       inputlinel = inputlinel.strip()
       if os.path.exists(inputlinel):
         if (use_SNU == True):
-          inputlinef_tmp.write("file://"+inputlinel+"\n")
+          inputlinef_tmp.write("file:"+inputlinel+"\n")
         else:
           inputlinef_tmp.write("root://cms-xrdr.private.lo:2094//xrd/store/user/"+username+"/"+inputlinel.split("/xrootd/")[1]+"\n")
       else:
@@ -164,20 +164,24 @@ if (runmode == "MULTICORE") or (runmode == "CLUSTER"):
     runshellfile.write("cd "+cwd+"/"+runmode+"/"+sample_name+"/run"+str(ijob)+"/\n")
     runshellfile.write("source /cvmfs/cms.cern.ch/cmsset_default.sh\n")
     runshellfile.write("eval `scramv1 runtime -sh`\n")
-    this_cmsdrivercmd = cmsdrivercmd+" --python_filename run"+str(ijob)+".py --fileout \"file:"+cwd+"/output/"+sample_name+"/"+nametag+"_"+str(ijob)+".root\" --filein \"file:"+inputlines[ijob-1].strip()+"\""
+    this_cmsdrivercmd = cmsdrivercmd+" --python_filename run"+str(ijob)+".py --fileout \"file:"+cwd+"/output/"+sample_name+"/"+nametag+"_"+str(ijob)+".root\" --filein \""+inputlines[ijob-1].strip()+"\""
     runshellfile.write(this_cmsdrivercmd+"\n")
     runshellfile.write("cmsRun run"+str(ijob)+".py &> run"+str(ijob)+".log\n")
     runshellfile.close()
+    os.chmod(runmode+"/"+sample_name+"/run"+str(ijob)+"/run"+str(ijob)+".sh",0o755)
 
     submitshellfile.write("cd "+cwd+"/"+runmode+"/"+sample_name+"/run"+str(ijob)+"\n")
     if (runmode == "MULTICORE"):
-      submitshellfile.write("chmod 755 "+cwd+"/"+runmode+"/"+sample_name+"/run"+str(ijob)+"/run"+str(ijob)+".sh\n")
       submitshellfile.write("nohup "+cwd+"/"+runmode+"/"+sample_name+"/run"+str(ijob)+"/run"+str(ijob)+".sh &\n")
     elif (runmode == "CLUSTER"):
       os.system("cp skeleton/condor.jds "+runmode+"/"+sample_name+"/run"+str(ijob))
       os.system("sed -i 's|###CONDORRUN|executable = run"+str(ijob)+".sh|g' "+runmode+"/"+sample_name+"/run"+str(ijob)+"/condor.jds")
       os.system("sed -i 's|###JOBBATCHNAME|+JobBatchName=\""+sample_name+"\"|g' "+runmode+"/"+sample_name+"/run"+str(ijob)+"/condor.jds")
       submitshellfile.write("condor_submit condor.jds\n")
+      if os.getenv("HOSTNAME") in ["tamsa1","tamsa2"]:
+        os.system("sed -i '/accounting_group/d' "+runmode+"/"+sample_name+"/run"+str(ijob)+"/condor.jds")
+        os.system("sed -i '/should_transfer_files/d' "+runmode+"/"+sample_name+"/run"+str(ijob)+"/condor.jds")
+        os.system("sed -i '/when_to_transfer_output/d' "+runmode+"/"+sample_name+"/run"+str(ijob)+"/condor.jds")
 
 elif (runmode == "CRABJOB"):
   os.system("cp skeleton/crab.py "+runmode+"/"+sample_name+"/")
