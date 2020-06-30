@@ -178,7 +178,7 @@ if (runmode == "MULTICORE") or (runmode == "CLUSTER"):
       os.system("sed -i 's|###CONDORRUN|executable = run"+str(ijob)+".sh|g' "+runmode+"/"+sample_name+"/run"+str(ijob)+"/condor.jds")
       os.system("sed -i 's|###JOBBATCHNAME|+JobBatchName=\""+sample_name+"\"|g' "+runmode+"/"+sample_name+"/run"+str(ijob)+"/condor.jds")
       submitshellfile.write("condor_submit condor.jds\n")
-      if os.getenv("HOSTNAME") in ["tamsa1","tamsa2"]:
+      if use_SNU:
         os.system("sed -i '/accounting_group/d' "+runmode+"/"+sample_name+"/run"+str(ijob)+"/condor.jds")
         os.system("sed -i '/should_transfer_files/d' "+runmode+"/"+sample_name+"/run"+str(ijob)+"/condor.jds")
         os.system("sed -i '/when_to_transfer_output/d' "+runmode+"/"+sample_name+"/run"+str(ijob)+"/condor.jds")
