@@ -23,3 +23,4 @@ config.Data.ignoreLocality = True
 
 config.Site.storageSite = 'T2_KR_KNU'
 config.Site.whitelist = ['T2_*','T3_*']
+###BLACKLIST
