@@ -184,7 +184,7 @@ elif (runmode == "CRABJOB"):
   os.system("sed -i 's|###NJOBS|NJOBS = "+str(int(ncores))+"|g' "+runmode+"/"+sample_name+"/crab.py")
 
   runshellfile = open(runmode+"/"+sample_name+"/run.sh","w")
-  this_cmsdrivercmd = cmsdrivercmd+" --python_filename "+sample_name+".py --fileout \""+nametag+".root\" --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="+str(random.randint(1, 10000000))+" --nThreads 4"
+  this_cmsdrivercmd = cmsdrivercmd+" --python_filename "+sample_name+".py --fileout \""+nametag+".root\" --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="+str(random.randint(1, 10000000))+" --nThreads 8"
   runshellfile.write(this_cmsdrivercmd+"\n")
   runshellfile.write("crab submit -c crab.py\n")
   runshellfile.close()
