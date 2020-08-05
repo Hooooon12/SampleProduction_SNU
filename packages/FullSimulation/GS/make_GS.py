@@ -18,7 +18,8 @@ def exit_runhosterr(runmode,hostname):
 	print "[EXIT] CRABJOB : KNU & KISTI"
 	sys.exit()
 
-username = pwd.getpwuid(os.getuid()).pw_name
+#username = pwd.getpwuid(os.getuid()).pw_name
+username = "jihunk" #JH : my knu name != cern name
 
 cwd = os.getcwd()
 datasettag = cwd.split("/")[-2]
@@ -230,12 +231,16 @@ elif (runmode == "CRABJOB"):
   os.system("sed -i 's|###NJOBS|NJOBS = "+crab_ncores+"|g' "+runmode+"/"+sample_name+"/crab.py")
 
   runshellfile = open(runmode+"/"+sample_name+"/run.sh","w")
-  this_cmsdrivercmd = cmsdrivercmd+" --python_filename "+sample_name+".py --fileout \""+nametag+".root\" --nThreads "+nsubcores+" --filein \""+inputlines[0].strip()+"\""
+  if (year == "2016"):
+    this_cmsdrivercmd = cmsdrivercmd+" --python_filename "+sample_name+".py --fileout \""+nametag+".root\" --filein \""+inputlines[0].strip()+"\"" #JH : cmsdriver doesn't work if using --nThreads
+  else:
+    this_cmsdrivercmd = cmsdrivercmd+" --python_filename "+sample_name+".py --fileout \""+nametag+".root\" --nThreads "+nsubcores+" --filein \""+inputlines[0].strip()+"\""
   runshellfile.write(this_cmsdrivercmd+"\n")
   runshellfile.write("crab submit -c crab.py\n")
   runshellfile.close()
 
   submitshellfile.write("cd "+cwd+"/"+runmode+"/"+sample_name+"\n")
+  submitshellfile.write("source /cvmfs/cms.cern.ch/slc6_amd64_gcc700/external/curl/7.59.0/etc/profile.d/init.sh\n") #JH : low version of CMSSW : see https://twiki.cern.ch/twiki/bin/view/CMSPublic/CRAB3FAQ#crab_commands_fails_with_Error_U
   submitshellfile.write("source run.sh\n")
 submitshellfile.write("cd "+cwd+"\n")
 submitshellfile.close()
