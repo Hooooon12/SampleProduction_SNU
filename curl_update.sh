@@ -1,0 +1,1 @@
+source /cvmfs/cms.cern.ch/slc6_amd64_gcc700/external/curl/7.59.0/etc/profile.d/init.sh #JH : 2016 GS only (due to the obsolete CMSSW version). see https://twiki.cern.ch/twiki/bin/view/CMSPublic/CRAB3FAQ#crab_commands_fails_with_Error_U
