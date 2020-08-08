@@ -1,22 +1,47 @@
-#This gets the output of checkSites.py and resubmit failed jobs
+#This resubmits all failed jobs. Run this at each CRABJOB directory.
 
 import os
 import commands as cmd
 
-sites = cmd.getoutput('ls | grep site')
+cwd = os.getcwd()
+samples = cmd.getoutput('ls | grep Heavy').split('\n')
+doneTxt = open('doneList.txt','a')
+with open('doneList.txt') as f:
+  doneLists = f.readlines()
 
-with open(sites) as f:
-  lines = f.readlines()
+for sample in samples:
+  if sample+'\n' in doneLists:
+    print "In",sample+":"
+    print "Completed job. Skipping..."
+    continue
+  lines = []
+  index = ''
+  Nfailed = 0
 
-a = ''
-n = 0
+  os.chdir(cwd+"/"+sample)
+  crabdir = cmd.getoutput('ls crab_projects')
 
-for line in lines:
-  if 'failed' in line:
-    a+=line.strip().split(' ')[0]+','
-    n+=1
+  out = cmd.getoutput('crab status -d crab_projects/'+crabdir+' --long | grep -e finished -e failed -e toRetry -e transferring -e running -e COMPLETED | grep -e T2 -e T3 -e COMPLETED')
+  if 'COMPLETED' in out:
+    print "In",sample+":"
+    print "Completed job. Skipping..."
+    doneTxt.write(sample+'\n')
+    continue
+  lines = out.split('\n')
 
-a = a[:-1]
+  for line in lines:
+    if 'failed' in line:
+      index+=line.strip().split(' ')[0]+','
+      Nfailed+=1
 
-print n,"job(s) failed. Resubmitting..."
-os.system('crab resubmit --jobids='+a)
+  index = index[:-1]
+  
+  if Nfailed == 0:
+    print "In",sample+":"
+    print "0 job failed. Skipping..."
+  else:
+    print "In",sample+":"
+    print Nfailed,"job(s) failed. Resubmitting..."
+    os.system('crab resubmit --jobids='+index)
+
+doneTxt.close()
