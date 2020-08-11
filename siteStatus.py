@@ -32,6 +32,12 @@ print s
 
 results = {}
 
+total=0
+for site in sites:
+  if site!='\n':
+    total+=1
+print total # This is the real number of total jobs. If a failed job's exit code is Unknown then it can confuse the value of 'a' below
+
 for i in s:
   results[i] = [0,0,0]
   for site in sites:
