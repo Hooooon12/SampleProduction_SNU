@@ -98,7 +98,7 @@ if (multi_flag == True):
     inputlinef = open("tmp/"+sample_name+".dat")
     inputlines = inputlinef.readlines()
     inputlinef.close()
-    ncores_many = ncores_many+int(inputlines)
+    ncores_many = ncores_many+int(ncores)
   submitmanyshellfile.close()
 else:
   sample_name = sys.argv[2]

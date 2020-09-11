@@ -71,5 +71,5 @@ for i,j in results.items():
 
 print "blacklist candidates:"
 for i,j in results.items():
-  if j[0]==0:
+  if j[0]==0 and j[1]!=0:
     print '%-21s'%i,"finished :",'%-3s'%j[0],", failed :",j[1]
