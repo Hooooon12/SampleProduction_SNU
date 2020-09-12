@@ -93,12 +93,14 @@ if (multi_flag == True):
     sample_name = listl.split("\t")[0]
     tunefile = listl.split("\t")[1].replace(".py","").replace("skeleton/","")
     inputpath = listl.split("\t")[2]
+    crab_nevents = listl.split("\t")[3]
+    crab_ncores = listl.split("\t")[4] #JH
     submitmanyshellfile.write("source "+cwd+"/submit_many_dir/submit_"+sample_name+".sh\n")
-    os.system("python make_"+nametag+".py "+runmode+" "+sample_name+" "+tunefile+" "+inputpath)
+    os.system("python make_"+nametag+".py "+runmode+" "+sample_name+" "+tunefile+" "+inputpath+" "+crab_nevents+" "+crab_ncores) #JH
     inputlinef = open("tmp/"+sample_name+".dat")
     inputlines = inputlinef.readlines()
     inputlinef.close()
-    ncores_many = ncores_many+int(ncores)
+    ncores_many = ncores_many+len(inputlines) #JH
   submitmanyshellfile.close()
 else:
   sample_name = sys.argv[2]

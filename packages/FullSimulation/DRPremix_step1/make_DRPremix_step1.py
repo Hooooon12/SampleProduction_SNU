@@ -57,7 +57,7 @@ minbias_files = "\"###PILEUP_INPUT\""
 if year == "2016": nevt_minbias = 2052. #these are nevents each minbias files have
 if year == "2017": nevt_minbias = 1433.
 if year == "2018": nevt_minbias = 800.
-n_minbias = int(110000./nevt_minbias) #JH
+n_minbias = int(410000./nevt_minbias) #JH
 if hostname in ["tamsa1", "tamsa2", "cms1", "cms2"]:
   use_SNU = True
   os.system("ls -1 /data9/Users/shjeon_public/PRESERVE/MinBias/FullSimulation/"+year+"/*root &>skeleton/ThisMinBias.dat")
