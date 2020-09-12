@@ -61,9 +61,13 @@ for method in methods:
         cmssw = steps[method][step][camp]
         setupshellfile.write("scram project -n "+step+"__"+cmssw+" CMSSW "+cmssw+"\n")
         if "GS" in step:
+          setupshellfile.write("pushd "+step+"__"+cmssw+"/src\n")
+          setupshellfile.write("cmsenv\n") 
           setupshellfile.write("git cms-addpkg GeneratorInterface/GenFilters\n")
-          setupshellfile.write("cp "+cwd+"/DiLepChargeFilter.cc "+step+"__"+cmssw+"/src/GeneratorInterface/GenFilters/src\n")
-          setupshellfile.write("scram b -j 8\n") #JH : to use filter
+          setupshellfile.write("rm GeneratorInterface/GenFilters/src/*\n")
+          setupshellfile.write("cp "+cwd+"/DiLepChargeFilter.cc GeneratorInterface/GenFilters/src\n")
+          setupshellfile.write("scram b -j 8\n") 
+          setupshellfile.write("popd\n") #JH : to use filter
         setupshellfile.write("cp -r "+cwd+"/packages/"+method+"Simulation/"+step+"/* "+step+"__"+cmssw+"/src/\n")
         setupshellfile.write("mkdir -p "+step+"__"+cmssw+"/src/tmp/\n")
       setupshellfile.write("cd -\n")
