@@ -242,7 +242,8 @@ elif (runmode == "CRABJOB"):
   runshellfile.close()
 
   submitshellfile.write("cd "+cwd+"/"+runmode+"/"+sample_name+"\n")
-  submitshellfile.write("source /cvmfs/cms.cern.ch/slc6_amd64_gcc700/external/curl/7.59.0/etc/profile.d/init.sh\n") #JH : low version of CMSSW : see https://twiki.cern.ch/twiki/bin/view/CMSPublic/CRAB3FAQ#crab_commands_fails_with_Error_U
+  if (year == "2016"):
+    submitshellfile.write("source /cvmfs/cms.cern.ch/slc6_amd64_gcc700/external/curl/7.59.0/etc/profile.d/init.sh\n") #JH : low version of CMSSW : see https://twiki.cern.ch/twiki/bin/view/CMSPublic/CRAB3FAQ#crab_commands_fails_with_Error_U
   submitshellfile.write("source run.sh\n")
 submitshellfile.write("cd "+cwd+"\n")
 submitshellfile.close()
