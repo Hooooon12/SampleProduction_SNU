@@ -206,7 +206,7 @@ elif (runmode == "CRABJOB"):
   os.system("sed -i 's|###INPUTDATASET|config.Data.inputDataset = \""+inputpath+"\"|g' "+runmode+"/"+sample_name+"/crab.py")
   os.system("sed -i 's|###OUTPUTTAG|config.Data.outputDatasetTag = \""+datasettag+"\"|g' "+runmode+"/"+sample_name+"/crab.py")
   if (year == "2017"):
-    os.system("sed -i 's|###BLACKLIST|config.Site.blacklist = ['T2_CH_CERN','T2_KR_KISTI','T2_UK_SGrid_RALPP','T2_IN_TIFR']")
+    os.system("sed -i 's|###BLACKLIST|config.Site.blacklist = [\"T2_CH_CERN\",\"T2_KR_KISTI\",\"T2_UK_SGrid_RALPP\",\"T2_IN_TIFR\"]|g' "+runmode+"/"+sample_name+"/crab.py")
   os.system("cp skeleton/sedcommand.py "+runmode+"/"+sample_name+"/")
   os.system("cp skeleton/ThisMinBias.dat "+runmode+"/"+sample_name+"/")
 
