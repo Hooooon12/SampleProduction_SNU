@@ -1,7 +1,12 @@
 #This resubmits all failed jobs. Run this at each CRABJOB directory.
 
-import os
+import os,sys
 import commands as cmd
+
+try: os.environ["CMSSW_VERSION"]
+except:
+  print "Please run this after setting CMSSW. Exiting..."
+  sys.exit()
 
 cwd = os.getcwd()
 samples = cmd.getoutput('ls | grep Heavy').split('\n')
