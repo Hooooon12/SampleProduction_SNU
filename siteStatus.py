@@ -27,7 +27,8 @@ for site in sites:
     s.add([v for v in site.split(' ') if v][2])
 
 s = list(s)
-s.remove('Unknown')
+try: s.remove('Unknown')
+except: pass
 
 print s
 
