@@ -92,12 +92,14 @@ if (multi_flag == True):
     sample_name = listl.split("\t")[0]
     tunefile = listl.split("\t")[1].replace(".py","").replace("skeleton/","")
     inputpath = listl.split("\t")[2]
+    crab_nevents = listl.split("\t")[3]
+    crab_ncores = listl.split("\t")[4]
     submitmanyshellfile.write("source "+cwd+"/submit_many_dir/submit_"+sample_name+".sh\n")
-    os.system("python make_"+nametag+".py "+runmode+" "+sample_name+" "+tunefile+" "+inputpath)
+    os.system("python make_"+nametag+".py "+runmode+" "+sample_name+" "+tunefile+" "+inputpath+" "+crab_nevents+" "+crab_ncores)
     inputlinef = open("tmp/"+sample_name+".dat")
     inputlines = inputlinef.readlines()
     inputlinef.close()
-    ncores_many = ncores_many+int(inputlines)
+    ncores_many = ncores_many+len(inputlines)
   submitmanyshellfile.close()
 else:
   sample_name = sys.argv[2]
@@ -230,7 +232,11 @@ elif (runmode == "CRABJOB"):
   os.system("sed -i 's|###NJOBS|NJOBS = "+crab_ncores+"|g' "+runmode+"/"+sample_name+"/crab.py")
 
   runshellfile = open(runmode+"/"+sample_name+"/run.sh","w")
-  this_cmsdrivercmd = cmsdrivercmd+" --python_filename "+sample_name+".py --fileout \""+nametag+".root\" --nThreads "+nsubcores+" --filein \""+inputlines[0].strip()+"\""
+  if (year == "2016"):
+    submitshellfile.write("source /cvmfs/cms.cern.ch/slc6_amd64_gcc700/external/curl/7.59.0/etc/profile.d/init.sh\n")
+    this_cmsdrivercmd = cmsdrivercmd+" --python_filename "+sample_name+".py --fileout \""+nametag+".root\" --filein \""+inputlines[0].strip()+"\""
+  else:
+    this_cmsdrivercmd = cmsdrivercmd+" --python_filename "+sample_name+".py --fileout \""+nametag+".root\" --nThreads "+nsubcores+" --filein \""+inputlines[0].strip()+"\""
   runshellfile.write(this_cmsdrivercmd+"\n")
   runshellfile.write("crab submit -c crab.py\n")
   runshellfile.close()
