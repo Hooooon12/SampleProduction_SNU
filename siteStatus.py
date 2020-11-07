@@ -27,6 +27,8 @@ for site in sites:
     s.add([v for v in site.split(' ') if v][2])
 
 s = list(s)
+try: s.remove('Unknown')
+except: pass
 
 print s
 
@@ -45,7 +47,7 @@ for i in s:
       results[i][0]+=1
     elif ((i in site) and (('Retry' in site) or ('failed' in site))):
       results[i][1]+=1
-    elif i in site:
+    elif ((i in site) and (('running' in site) or ('transfer' in site))):
       results[i][2]+=1
 
 a=0
