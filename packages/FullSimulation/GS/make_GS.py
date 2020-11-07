@@ -18,8 +18,8 @@ def exit_runhosterr(runmode,hostname):
 	print "[EXIT] CRABJOB : KNU & KISTI"
 	sys.exit()
 
-#username = pwd.getpwuid(os.getuid()).pw_name
-username = "jihunk" #JH : my knu name != cern name
+username = pwd.getpwuid(os.getuid()).pw_name
+#username = "jihunk" #JH : my knu name != cern name
 
 cwd = os.getcwd()
 datasettag = cwd.split("/")[-2]

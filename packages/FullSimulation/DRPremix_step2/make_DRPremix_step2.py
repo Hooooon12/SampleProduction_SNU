@@ -96,6 +96,9 @@ else:
   sample_name = sys.argv[2]
   inputpath = sys.argv[3]
 
+  if (runmode == "CRABJOB"):
+    os.system("echo > tmp/"+sample_name+".dat") #JH
+
   if (runmode == "MULTICORE" or runmode == "CLUSTER"):
     os.system("ls -1 "+inputpath+"/*.root &> tmp/"+sample_name+".dat")
 
