@@ -186,6 +186,9 @@ elif (runmode == "CRABJOB"):
   os.system("sed -i 's|###OUTPUTTAG|config.Data.outputDatasetTag = \""+datasettag+"\"|g' "+runmode+"/"+sample_name+"/crab.py")
   os.system("sed -i 's|###UNITSPERJOB|config.Data.unitsPerJob = "+str(int(nevents)/int(ncores))+"|g' "+runmode+"/"+sample_name+"/crab.py")
   os.system("sed -i 's|###NJOBS|NJOBS = "+str(int(ncores))+"|g' "+runmode+"/"+sample_name+"/crab.py")
+  os.system("cp skeleton/pLHE-GS_CRAB_BlackList_"+year+".dat "+runmode+"/ThisBlackList.dat")
+  os.system("cp -n skeleton/resubmit.py "+runmode+"/")
+  os.system("sed -i 's|###BLACKLIST|ThisBlackList.dat|g' "+runmode+"/resubmit.py")
 
   runshellfile = open(runmode+"/"+sample_name+"/run.sh","w")
   this_cmsdrivercmd = cmsdrivercmd+" --python_filename "+sample_name+".py --fileout \""+nametag+".root\" --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="+str(random.randint(1, 10000000))+" --nThreads 8"

@@ -107,6 +107,9 @@ else:
   sample_name = sys.argv[2]
   inputpath = sys.argv[3]
 
+  if (runmode == "CRABJOB"):
+    os.system("echo > tmp/"+sample_name+".dat")
+
   if (runmode == "MULTICORE" or runmode == "CLUSTER"):
     os.system("rm "+inputpath+"/*_inLHE.root")
     os.system("ls -1 "+inputpath+"/*.root &> tmp/"+sample_name+".dat")
@@ -207,6 +210,9 @@ elif (runmode == "CRABJOB"):
   os.system("sed -i 's|###OUTPUTTAG|config.Data.outputDatasetTag = \""+datasettag+"\"|g' "+runmode+"/"+sample_name+"/crab.py")
   os.system("cp skeleton/sedcommand.py "+runmode+"/"+sample_name+"/")
   os.system("cp skeleton/ThisMinBias.dat "+runmode+"/"+sample_name+"/")
+  os.system("cp skeleton/DRPremix_step1_CRAB_BlackList_"+year+".dat "+runmode+"/ThisBlackList.dat")
+  os.system("cp -n skeleton/resubmit.py "+runmode+"/")
+  os.system("sed -i 's|###BLACKLIST|ThisBlackList.dat|g' "+runmode+"/resubmit.py")
 
   runshellfile = open(runmode+"/"+sample_name+"/run.sh","w")
   this_cmsdrivercmd = cmsdrivercmd+" --python_filename "+sample_name+".py --fileout \""+nametag+".root\" --nThreads 2 --pileup_input "+minbias_files

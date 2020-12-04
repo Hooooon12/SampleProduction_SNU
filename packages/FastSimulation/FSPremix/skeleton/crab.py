@@ -21,4 +21,4 @@ config.Data.splitting = 'EventBased'
 config.Data.totalUnits = config.Data.unitsPerJob * NJOBS
 config.Data.publication = True
 
-config.Site.storageSite = 'T2_KR_KNU'
+config.Site.storageSite = 'T3_KR_KNU'

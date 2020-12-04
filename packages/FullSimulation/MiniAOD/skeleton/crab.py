@@ -21,5 +21,5 @@ config.Data.unitsPerJob = 1
 config.Data.publication = True
 config.Data.ignoreLocality = True
 
-config.Site.storageSite = 'T2_KR_KNU'
+config.Site.storageSite = 'T3_KR_KNU'
 config.Site.whitelist = ['T2_*','T3_*']

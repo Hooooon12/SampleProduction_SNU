@@ -230,6 +230,9 @@ elif (runmode == "CRABJOB"):
   os.system("sed -i 's|###OUTPUTTAG|config.Data.outputDatasetTag = \""+datasettag+"\"|g' "+runmode+"/"+sample_name+"/crab.py")
   os.system("sed -i 's|###UNITSPERJOB|config.Data.unitsPerJob = "+str(int(crab_nevents)/int(crab_ncores))+"|g' "+runmode+"/"+sample_name+"/crab.py")
   os.system("sed -i 's|###NJOBS|NJOBS = "+crab_ncores+"|g' "+runmode+"/"+sample_name+"/crab.py")
+  os.system("cp skeleton/GS_CRAB_BlackList_"+year+".dat "+runmode+"/ThisBlackList.dat")
+  os.system("cp -n skeleton/resubmit.py "+runmode+"/")
+  os.system("sed -i 's|###BLACKLIST|ThisBlackList.dat|g' "+runmode+"/resubmit.py")
 
   runshellfile = open(runmode+"/"+sample_name+"/run.sh","w")
   if (year == "2016"):
