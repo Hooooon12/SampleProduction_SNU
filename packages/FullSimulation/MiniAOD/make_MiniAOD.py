@@ -44,7 +44,7 @@ if (runmode == "MULTICORE"):
   if not hostname in ["cms1", "cms2"]:
     exit_runhosterr(runmode,hostname)
 elif (runmode == "CLUSTER"):
-  if not hostname in ["tamsa1", "tamsa2", "ui10.sdfarm.kr", "ui20.sdfarm.kr"]:
+  if not hostname in ["cms.knu.ac.kr", "cms01.knu.ac.kr", "cms02.knu.ac.kr", "cms03.knu.ac.kr", "lxplus", "tamsa1", "tamsa2", "ui10.sdfarm.kr", "ui20.sdfarm.kr"]:
     exit_runhosterr(runmode,hostname)
 elif (runmode == "CRABJOB"):
   if not hostname in ["cms.knu.ac.kr", "cms01.knu.ac.kr", "cms02.knu.ac.kr", "cms03.knu.ac.kr", "lxplus", "ui10.sdfarm.kr", "ui20.sdfarm.kr"]:
@@ -96,6 +96,9 @@ else:
   sample_name = sys.argv[2]
   inputpath = sys.argv[3]
 
+  if (runmode == "CRABJOB"):
+    os.system("echo > tmp/"+sample_name+".dat")
+
   if (runmode == "MULTICORE" or runmode == "CLUSTER"):
     os.system("ls -1 "+inputpath+"/*.root &> tmp/"+sample_name+".dat")
 
@@ -106,7 +109,7 @@ else:
     for inputlinel in inputlines:
       inputlinel = inputlinel.strip()
       if os.path.exists(inputlinel):
-        if (use_SNU == True):
+        if (use_SNU == True) or os.getenv("HOSTNAME") in ["cms.knu.ac.kr", "cms01.knu.ac.kr", "cms02.knu.ac.kr", "cms03.knu.ac.kr", "lxplus"]:
           inputlinef_tmp.write("file:"+inputlinel+"\n")
         else:
           inputlinef_tmp.write("root://cms-xrdr.private.lo:2094//xrd/store/user/"+username+"/"+inputlinel.split("/xrootd/")[1]+"\n")
@@ -189,6 +192,9 @@ elif (runmode == "CRABJOB"):
   os.system("sed -i 's|###PSETNAME|config.JobType.psetName = \""+sample_name+".py\"|g' "+runmode+"/"+sample_name+"/crab.py")
   os.system("sed -i 's|###INPUTDATASET|config.Data.inputDataset = \""+inputpath+"\"|g' "+runmode+"/"+sample_name+"/crab.py")
   os.system("sed -i 's|###OUTPUTTAG|config.Data.outputDatasetTag = \""+datasettag+"\"|g' "+runmode+"/"+sample_name+"/crab.py")
+  os.system("cp skeleton/MiniAOD_CRAB_BlackList_"+year+".dat "+runmode+"/ThisBlackList.dat")
+  os.system("cp -n skeleton/resubmit.py "+runmode+"/")
+  os.system("sed -i 's|###BLACKLIST|ThisBlackList.dat|g' "+runmode+"/resubmit.py")
 
   runshellfile = open(runmode+"/"+sample_name+"/run.sh","w")
   this_cmsdrivercmd = cmsdrivercmd+" --python_filename "+sample_name+".py --fileout \""+nametag+".root\" --nThreads 2"
