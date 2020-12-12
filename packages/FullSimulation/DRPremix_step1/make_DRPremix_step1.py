@@ -45,10 +45,10 @@ if (runmode == "MULTICORE"):
   if not hostname in ["cms1", "cms2"]:
     exit_runhosterr(runmode,hostname)
 elif (runmode == "CLUSTER"):
-  if not hostname in ["tamsa1", "tamsa2", "ui10.sdfarm.kr", "ui20.sdfarm.kr"]:
+  if not hostname in ["tamsa1", "tamsa2", "ui10.sdfarm.kr", "ui20.sdfarm.kr"]: #JH : don't need to add KNU and lxplus they don't have minbias events locally
     exit_runhosterr(runmode,hostname)
 elif (runmode == "CRABJOB"):
-  if not hostname in ["cms.knu.ac.kr", "cms01.knu.ac.kr", "cms02.knu.ac.kr", "cms03.knu.ac.kr", "lxplus", "ui10.sdfarm.kr", "ui20.sdfarm.kr"]:
+  if not hostname in ["cms.knu.ac.kr", "cms01.knu.ac.kr", "cms02.knu.ac.kr", "cms03.knu.ac.kr", "lxplus", "tamsa1", "tamsa2", "cms1", "cms2", "ui10.sdfarm.kr", "ui20.sdfarm.kr"]:
     exit_runhosterr(runmode,hostname)
 else:
   exit_runhosterr(runmode,hostname)
@@ -57,7 +57,7 @@ minbias_files = "\"###PILEUP_INPUT\""
 if year == "2016": nevt_minbias = 2052. #these are nevents each minbias files have
 if year == "2017": nevt_minbias = 1433.
 if year == "2018": nevt_minbias = 800.
-n_minbias = int(410000./nevt_minbias) #JH
+n_minbias = int(410000./nevt_minbias) #JH : fix this properly
 if hostname in ["tamsa1", "tamsa2", "cms1", "cms2"]:
   use_SNU = True
   os.system("ls -1 /data9/Users/shjeon_public/PRESERVE/MinBias/FullSimulation/"+year+"/*root &>skeleton/ThisMinBias.dat")
@@ -108,7 +108,7 @@ else:
   inputpath = sys.argv[3]
 
   if (runmode == "CRABJOB"):
-    os.system("echo > tmp/"+sample_name+".dat") #JH
+    os.system("echo > tmp/"+sample_name+".dat")
 
   if (runmode == "MULTICORE" or runmode == "CLUSTER"):
     os.system("rm "+inputpath+"/*_inLHE.root")
@@ -208,9 +208,11 @@ elif (runmode == "CRABJOB"):
   os.system("sed -i 's|###PSETNAME|config.JobType.psetName = \""+sample_name+".py\"|g' "+runmode+"/"+sample_name+"/crab.py")
   os.system("sed -i 's|###INPUTDATASET|config.Data.inputDataset = \""+inputpath+"\"|g' "+runmode+"/"+sample_name+"/crab.py")
   os.system("sed -i 's|###OUTPUTTAG|config.Data.outputDatasetTag = \""+datasettag+"\"|g' "+runmode+"/"+sample_name+"/crab.py")
-  os.system("sed -i 's|###BLACKLIST|config.Site.blacklist = [\"T2_CH_CERN\",\"T2_KR_KISTI\",\"T2_UK_SGrid_RALPP\",\"T2_IN_TIFR\"]|g' "+runmode+"/"+sample_name+"/crab.py") #JH
   os.system("cp skeleton/sedcommand.py "+runmode+"/"+sample_name+"/")
   os.system("cp skeleton/ThisMinBias.dat "+runmode+"/"+sample_name+"/")
+  os.system("cp skeleton/DRPremix_step1_CRAB_BlackList_"+year+".dat "+runmode+"/ThisBlackList.dat")
+  os.system("cp -n skeleton/resubmit.py "+runmode+"/")
+  os.system("sed -i 's|###BLACKLIST|ThisBlackList.dat|g' "+runmode+"/resubmit.py")
 
   runshellfile = open(runmode+"/"+sample_name+"/run.sh","w")
   this_cmsdrivercmd = cmsdrivercmd+" --python_filename "+sample_name+".py --fileout \""+nametag+".root\" --nThreads 2 --pileup_input "+minbias_files

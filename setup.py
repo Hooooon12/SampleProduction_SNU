@@ -3,11 +3,11 @@ import os,argparse
 cwd = os.getcwd()
 
 parser = argparse.ArgumentParser(description='Setting up basic environments for SampleProduction_SNU')
-parser.add_argument(	"--year", "-y",
-			type=str,
-			help="Which campaigns from RunIILegacy? [2016,2017,2018] ex) -y 2016,2018 OR -y 2017",
-			default="2016,2017,2018",
-			)
+parser.add_argument(    "--year", "-y",
+                        type=str,
+                        help="Which campaigns from RunIILegacy? [2016,2017,2018] ex) -y 2016,2018 OR -y 2017",
+                        default="2016,2017,2018",
+                        )
 parser.add_argument(    "--method", "-m",
                         type=str,
                         help="[Fast,Full,LHE] ex) -m Full OR -m Full,Fast -m Full,LHE",
@@ -24,8 +24,8 @@ years = args.year.split(",")
 methods = args.method.split(",")
 steps = {       "Full":{"pLHE-GS":
                         ["CMSSW_7_1_45_patch3","CMSSW_9_3_17","CMSSW_10_2_20"],
-			"GS":
-			["CMSSW_7_1_45_patch3","CMSSW_9_3_17","CMSSW_10_2_20"],
+                        "GS":
+                        ["CMSSW_7_1_45_patch3","CMSSW_9_3_17","CMSSW_10_2_20"],
                         "DRPremix_step1":
                         ["CMSSW_8_0_31","CMSSW_9_4_7","CMSSW_10_2_5"],
                         "DRPremix_step2":

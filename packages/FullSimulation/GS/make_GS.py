@@ -46,10 +46,10 @@ if (runmode == "MULTICORE"):
   if not hostname in ["cms1", "cms2"]:
     exit_runhosterr(runmode,hostname)
 elif (runmode == "CLUSTER"):
-  if not hostname in ["tamsa1", "tamsa2", "ui10.sdfarm.kr", "ui20.sdfarm.kr"]:
+  if not hostname in ["cms.knu.ac.kr", "cms01.knu.ac.kr", "cms02.knu.ac.kr", "cms03.knu.ac.kr", "lxplus", "tamsa1", "tamsa2", "ui10.sdfarm.kr", "ui20.sdfarm.kr"]:
     exit_runhosterr(runmode,hostname)
 elif (runmode == "CRABJOB"):
-  if not hostname in ["cms.knu.ac.kr", "cms01.knu.ac.kr", "cms02.knu.ac.kr", "cms03.knu.ac.kr", "lxplus", "ui10.sdfarm.kr", "ui20.sdfarm.kr"]:
+  if not hostname in ["cms.knu.ac.kr", "cms01.knu.ac.kr", "cms02.knu.ac.kr", "cms03.knu.ac.kr", "lxplus", "tamsa1", "tamsa2", "cms1", "cms2", "ui10.sdfarm.kr", "ui20.sdfarm.kr"]:
     exit_runhosterr(runmode,hostname)
 else:
   exit_runhosterr(runmode,hostname)
@@ -94,13 +94,13 @@ if (multi_flag == True):
     tunefile = listl.split("\t")[1].replace(".py","").replace("skeleton/","")
     inputpath = listl.split("\t")[2]
     crab_nevents = listl.split("\t")[3]
-    crab_ncores = listl.split("\t")[4] #JH
+    crab_ncores = listl.split("\t")[4]
     submitmanyshellfile.write("source "+cwd+"/submit_many_dir/submit_"+sample_name+".sh\n")
-    os.system("python make_"+nametag+".py "+runmode+" "+sample_name+" "+tunefile+" "+inputpath+" "+crab_nevents+" "+crab_ncores) #JH
+    os.system("python make_"+nametag+".py "+runmode+" "+sample_name+" "+tunefile+" "+inputpath+" "+crab_nevents+" "+crab_ncores)
     inputlinef = open("tmp/"+sample_name+".dat")
     inputlines = inputlinef.readlines()
     inputlinef.close()
-    ncores_many = ncores_many+len(inputlines) #JH
+    ncores_many = ncores_many+len(inputlines)
   submitmanyshellfile.close()
 else:
   sample_name = sys.argv[2]
@@ -231,9 +231,13 @@ elif (runmode == "CRABJOB"):
   os.system("sed -i 's|###OUTPUTTAG|config.Data.outputDatasetTag = \""+datasettag+"\"|g' "+runmode+"/"+sample_name+"/crab.py")
   os.system("sed -i 's|###UNITSPERJOB|config.Data.unitsPerJob = "+str(int(crab_nevents)/int(crab_ncores))+"|g' "+runmode+"/"+sample_name+"/crab.py")
   os.system("sed -i 's|###NJOBS|NJOBS = "+crab_ncores+"|g' "+runmode+"/"+sample_name+"/crab.py")
+  os.system("cp skeleton/GS_CRAB_BlackList_"+year+".dat "+runmode+"/ThisBlackList.dat")
+  os.system("cp -n skeleton/resubmit.py "+runmode+"/")
+  os.system("sed -i 's|###BLACKLIST|ThisBlackList.dat|g' "+runmode+"/resubmit.py")
 
   runshellfile = open(runmode+"/"+sample_name+"/run.sh","w")
   if (year == "2016"):
+    submitshellfile.write("source /cvmfs/cms.cern.ch/slc6_amd64_gcc700/external/curl/7.59.0/etc/profile.d/init.sh\n") #JH : low version of CMSSW : see https://twiki.cern.ch/twiki/bin/view/CMSPublic/CRAB3FAQ#crab_commands_fails_with_Error_U
     this_cmsdrivercmd = cmsdrivercmd+" --python_filename "+sample_name+".py --fileout \""+nametag+".root\" --filein \""+inputlines[0].strip()+"\"" #JH : cmsdriver doesn't work if using --nThreads
   else:
     this_cmsdrivercmd = cmsdrivercmd+" --python_filename "+sample_name+".py --fileout \""+nametag+".root\" --nThreads "+nsubcores+" --filein \""+inputlines[0].strip()+"\""
@@ -242,8 +246,6 @@ elif (runmode == "CRABJOB"):
   runshellfile.close()
 
   submitshellfile.write("cd "+cwd+"/"+runmode+"/"+sample_name+"\n")
-  if (year == "2016"):
-    submitshellfile.write("source /cvmfs/cms.cern.ch/slc6_amd64_gcc700/external/curl/7.59.0/etc/profile.d/init.sh\n") #JH : low version of CMSSW : see https://twiki.cern.ch/twiki/bin/view/CMSPublic/CRAB3FAQ#crab_commands_fails_with_Error_U
   submitshellfile.write("source run.sh\n")
 submitshellfile.write("cd "+cwd+"\n")
 submitshellfile.close()

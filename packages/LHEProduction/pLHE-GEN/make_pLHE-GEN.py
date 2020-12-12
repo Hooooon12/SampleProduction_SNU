@@ -15,13 +15,12 @@ def exit_runhosterr(runmode,hostname):
 	print "[EXIT] "+runmode+" could not be submitted to "+hostname
 	print "[EXIT] MULTICORE : SNU"
 	print "[EXIT] CLUSTER : SNU tamsa & KISTI"
-	print "[EXIT] CRABJOB : KNU & KISTI"
+        print "[EXIT] CRABJOB : KNU & KISTI"
 	sys.exit()
 
 cwd = os.getcwd()
 datasettag = cwd.split("/")[-2]
 nametag =datasettag.split("__")[0]
-year = cwd.split("/")[-3]
 
 try:
   runmode = sys.argv[1]
@@ -43,10 +42,10 @@ if (runmode == "MULTICORE"):
   if not hostname in ["cms1", "cms2"]:
     exit_runhosterr(runmode,hostname)
 elif (runmode == "CLUSTER"):
-  if not hostname in ["cms.knu.ac.kr", "cms01.knu.ac.kr", "cms02.knu.ac.kr", "cms03.knu.ac.kr", "lxplus", "tamsa1", "tamsa2", "ui10.sdfarm.kr", "ui20.sdfarm.kr"]:
+  if not hostname in ["tamsa1", "tamsa2", "ui10.sdfarm.kr", "ui20.sdfarm.kr"]:
     exit_runhosterr(runmode,hostname)
 elif (runmode == "CRABJOB"):
-  if not hostname in ["cms.knu.ac.kr", "cms01.knu.ac.kr", "cms02.knu.ac.kr", "cms03.knu.ac.kr", "lxplus", "tamsa1", "tamsa2", "cms1", "cms2", "ui10.sdfarm.kr", "ui20.sdfarm.kr"]:
+  if not hostname in ["cms.knu.ac.kr", "cms01.knu.ac.kr", "cms02.knu.ac.kr", "cms03.knu.ac.kr", "lxplus", "ui10.sdfarm.kr", "ui20.sdfarm.kr"]:
     exit_runhosterr(runmode,hostname)
 else:
   exit_runhosterr(runmode,hostname)
@@ -115,18 +114,13 @@ else:
     submitshellfile.write("eval `scramv1 runtime -sh`\n")
     submitshellfile.write("scram b -j 2\n")
 
-if (int(nevents)/int(ncores) > 5000):
-  print "[EXIT] Number of events per core too many : should not be more than 5000"
+if (int(nevents)/int(ncores) > 25000):
+  print "[EXIT] Number of events per core too many : should not be more than 25000"
   sys.exit()
 
 if ((int(nevents)/int(ncores)) != (float(nevents)/int(ncores))):
   print "[EXIT] Number of events per core not an integer"
   sys.exit()
-
-if (runmode == "CRABJOB"):
-  if (year == "2016"):
-    print "[EXIT] 2016 Campaign samples is highly recommended to be submitted with pLHE and GS configurations separately since nThreads option is not available"
-    sys.exit()
 
 if (os.path.exists(runmode+"/"+sample_name+"/") or os.path.exists("output/"+sample_name+"/")):
   print "[EXIT] Either "+runmode+"/"+sample_name+"/ or output/"+sample_name+"/ already exists"
@@ -138,18 +132,11 @@ else:
 
 print_sampleinfo(sample_name, nevents, ncores, gridpack)
 
-cmsdriverf = open("skeleton/"+nametag+".dat")
-cmsdrivers = cmsdriverf.readlines()
-cmsdriverf.close()
-for cmsdriverl in cmsdrivers:
-  if (year == cmsdriverl.strip().split("\t")[0]):
-    cmsdriverdat = cmsdriverl.strip().split("\t")[1]
-
 os.system("mkdir -p Configuration/GenProduction/python")
 os.system("cp skeleton/"+tunefile+".py Configuration/GenProduction/python/"+sample_name+".py")
 os.system("sed -i 's|###GRIDPACK|    args = cms.vstring(\""+gridpack+"\"),|g' Configuration/GenProduction/python/"+sample_name+".py")
 
-cmsdrivercmd = "cmsDriver.py Configuration/GenProduction/"+sample_name+".py -n "+str(int(nevents)/int(ncores))+" "+cmsdriverdat
+cmsdrivercmd = "cmsDriver.py Configuration/GenProduction/"+sample_name+".py -n "+str(int(nevents)/int(ncores))+" -s GEN --no_exec --conditions auto:mc --eventcontent RAWSIM"
 submitshellfile.write("###Submitting "+sample_name+"\n")
 
 if (runmode == "MULTICORE") or (runmode == "CLUSTER"):
@@ -186,9 +173,6 @@ elif (runmode == "CRABJOB"):
   os.system("sed -i 's|###OUTPUTTAG|config.Data.outputDatasetTag = \""+datasettag+"\"|g' "+runmode+"/"+sample_name+"/crab.py")
   os.system("sed -i 's|###UNITSPERJOB|config.Data.unitsPerJob = "+str(int(nevents)/int(ncores))+"|g' "+runmode+"/"+sample_name+"/crab.py")
   os.system("sed -i 's|###NJOBS|NJOBS = "+str(int(ncores))+"|g' "+runmode+"/"+sample_name+"/crab.py")
-  os.system("cp skeleton/pLHE-GS_CRAB_BlackList_"+year+".dat "+runmode+"/ThisBlackList.dat")
-  os.system("cp -n skeleton/resubmit.py "+runmode+"/")
-  os.system("sed -i 's|###BLACKLIST|ThisBlackList.dat|g' "+runmode+"/resubmit.py")
 
   runshellfile = open(runmode+"/"+sample_name+"/run.sh","w")
   this_cmsdrivercmd = cmsdrivercmd+" --python_filename "+sample_name+".py --fileout \""+nametag+".root\" --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="+str(random.randint(1, 10000000))+" --nThreads 8"
