@@ -164,12 +164,16 @@ if (runmode == "MULTICORE") or (runmode == "CLUSTER"):
   for ijob in range(1,ncores+1):
     os.system("mkdir -p "+runmode+"/"+sample_name+"/run"+str(ijob))
     runshellfile = open(runmode+"/"+sample_name+"/run"+str(ijob)+"/run"+str(ijob)+".sh","w")
-    runshellfile.write("cd "+cwd+"/"+runmode+"/"+sample_name+"/run"+str(ijob)+"/\n")
+    runshellfile.write("pwd\n") #JH
+    runshellfile.write("pushd "+cwd+"/"+runmode+"/"+sample_name+"/run"+str(ijob)+"/\n") #JH
     runshellfile.write("source /cvmfs/cms.cern.ch/cmsset_default.sh\n")
     runshellfile.write("eval `scramv1 runtime -sh`\n")
-    this_cmsdrivercmd = cmsdrivercmd+" --python_filename run"+str(ijob)+".py --fileout \"file:"+cwd+"/output/"+sample_name+"/"+nametag+"_"+str(ijob)+".root\" --filein \""+inputlines[ijob-1].strip()+"\""
+    runshellfile.write("popd\n") #JH
+    #this_cmsdrivercmd = cmsdrivercmd+" --python_filename run"+str(ijob)+".py --fileout \"file:"+cwd+"/output/"+sample_name+"/"+nametag+"_"+str(ijob)+".root\" --filein \""+inputlines[ijob-1].strip()+"\""
+    this_cmsdrivercmd = cmsdrivercmd+" --python_filename run"+str(ijob)+".py --fileout \"file:"+nametag+"_"+str(ijob)+".root\" --filein \""+inputlines[ijob-1].strip()+"\"" #JH
     runshellfile.write(this_cmsdrivercmd+"\n")
     runshellfile.write("cmsRun run"+str(ijob)+".py &> run"+str(ijob)+".log\n")
+    runshellfile.write("mv "+nametag+"_"+str(ijob)+".root "+cwd+"/output/"+sample_name+"/\n") #JH
     runshellfile.close()
     os.chmod(runmode+"/"+sample_name+"/run"+str(ijob)+"/run"+str(ijob)+".sh",0o755)
 
