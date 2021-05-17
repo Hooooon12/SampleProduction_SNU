@@ -50,5 +50,5 @@ for sample in samples:
     new_f.write('processedLumis = getLumiListInValidFiles(dataset=\''+myDataSet+'\', dbsurl=\'phys03\')\n')
     new_f.write('newLumis = inputLumis - processedLumis\n')
     new_f.write('newLumis.writeJSON(\'my_lumi_mask.json\')\n')
-    new_f.write('config.Data.lumiMask = \'my_lumi_mask.json\'')
+    new_f.write('config.Data.lumiMask = \'my_lumi_mask.json\'\n')
     new_f.write('#### Now do: crab submit -c crab_recovery.py')
