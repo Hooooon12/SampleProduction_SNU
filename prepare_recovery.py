@@ -46,8 +46,9 @@ for sample in samples:
     for newline in newlines:
       new_f.write(newline)
     new_f.write('\n')
-    new_f.write('inputLumis = LumiList(filename=\''+realpath+'\') #### modify this lumilist properly by yourself\n')
+    new_f.write('inputLumis = LumiList(filename=\''+realpath+'\') #### modify this lumilist to the full lumisection by yourself\n')
     new_f.write('processedLumis = getLumiListInValidFiles(dataset=\''+myDataSet+'\', dbsurl=\'phys03\')\n')
     new_f.write('newLumis = inputLumis - processedLumis\n')
     new_f.write('newLumis.writeJSON(\'my_lumi_mask.json\')\n')
     new_f.write('config.Data.lumiMask = \'my_lumi_mask.json\'')
+    new_f.write('#### Now do: crab submit -c crab_recovery.py')
